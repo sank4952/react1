@@ -1,0 +1,400 @@
+(function ($) {
+
+    $.fn.calendar_yearview_blocks = function (options) {
+
+        // Format string
+        if (!String.prototype.formatString) {
+            String.prototype.formatString = function () {
+                var args = arguments;
+                return this.replace(/{(\d+)}/g, function (match, number) {
+                    return typeof args[number] !== 'undefined'
+                        ? args[number]
+                        : match
+                        ;
+                });
+            };
+        }
+
+        // If the number less than 10, add a zero before it
+        var prettyNumber = function (number) {
+            return number < 10 ? '0' + number.toString() : number = number.toString();
+        };
+
+        var getDisplayDate = function (date_obj) {
+            var pretty_month = prettyNumber(date_obj.getMonth() + 1);
+            var pretty_date = prettyNumber(date_obj.getDate());
+            return "{0}-{1}-{2}".formatString(pretty_date, pretty_month, date_obj.getFullYear());
+        };
+
+        var start = function () {
+            obj_timestamp = JSON.parse(settings.data);
+            // console.log(obj_timestamp);
+
+            var wrap_chart = _this;
+
+            var end_date = new Date(settings.final_date);
+            //console.log(end_date);
+            var current_date = new Date();
+            var start_date = new Date();
+            //console.log(end_date.getMonth());
+            start_date.setMonth(end_date.getMonth() - 12);
+            //console.log(start_date.getMonth());
+
+            var start_weekday = settings.start_monday === true?1:0;
+            for (var i = 0; i < 7; i++) {
+                var day = start_date.getDay();
+                if (day === start_weekday) {
+                    break;
+                }
+                else {
+                    // Loop until start_weekday
+                    start_date.setDate(start_date.getDate() + 1);
+                }
+            }
+            var loop_html = "";
+
+            // One year has 52 weeks
+            var step = 13; // Amount of pixels to move
+
+            var month_position = [];
+            month_position.push({month_index: start_date.getMonth(), x: 0});
+            var using_month = start_date.getMonth();
+            for (var i = 0; i <= 52; i++) { // For each week, generate a column
+                var g_x = i * step;
+                var item_html = '<g transform="translate(' + g_x.toString() + ',0)">';
+
+                for (var j = 0; j < 7; j++) { // For each weekday, generate a row
+
+                    if (start_date > end_date) {
+                        // Break the loop when today's date is found
+                        break;
+                    }
+                    var y = j * step;
+
+                    var month_in_day = start_date.getMonth();
+                    var data_date = getDisplayDate(start_date);
+
+                    // Check first day in week
+                    if (j === start_weekday && month_in_day !== using_month) {
+                        using_month = month_in_day;
+                        month_position.push({month_index: using_month, x: g_x});
+                    }
+
+                    // Put a box around today's date
+                    if (settings.stylize_today) {
+                        var match_today = current_date.getTime() === start_date.getTime() ? '" style="stroke:black;stroke-width:2;opacity:0.5"' : '';
+                    } else {
+                        var match_today = "";
+                    }
+
+                    var items = [];
+                    var legend = '', items_str = '';
+                    var total='';
+                    if (obj_timestamp[data_date]) {
+                        // console.log(obj_timestamp[data_date].total);
+                        if (obj_timestamp[data_date].items) {
+                            items = obj_timestamp[data_date].items;
+                            // console.log(items);
+							items_str = items.join(",")
+                            //console.log(items_str);
+							items_str = items_str.replaceAll('&', '&amp;');
+							items_str = items_str.replaceAll('"', '&quot;');
+                        }
+                        if (obj_timestamp[data_date].legend) {
+                            legend = obj_timestamp[data_date].legend;
+							legend = legend.replaceAll('&', '&amp;');
+							legend = legend.replaceAll('"', '&quot;');
+                        }
+                        if (obj_timestamp[data_date].total) {
+                            total = obj_timestamp[data_date].total;
+                            // console.log(total);
+                            
+                        }
+                    }
+
+                    var item_name = items[0]?items[0]:false;
+                    // console.log(item_name);
+                    var color = settings.colors[item_name]?settings.colors[item_name]:settings.colors['default'];
+
+                    // Fill a square for the 1st item
+                    if (total<= 2 && total!='') { // Fill a trangle for the 2nd
+                       
+                        var item_name_1 = 'btwo';
+                        var color_1 = settings.colors[item_name_1]?settings.colors[item_name_1]:settings.colors['default'];
+                        item_html += '<rect class="day" width="11" height="11" y="' + y + '" fill="' + color_1+ '" data-items="' + items_str + '"  data-total="' + total + '" data-legend="' + legend + '" data-date="' + data_date + '"/>';
+                    } else if (total>2 && total<=6) { // Fill 2 rectangles for 2nd and 3rd
+                       
+                        var item_name_1 = "twosix";
+                        var color_1 = settings.colors[item_name_1]?settings.colors[item_name_1]:settings.colors['default'];
+                        item_html += '<rect class="day" width="11" height="11" y="' + y + '" fill="' + color_1+ '" data-items="' + items_str + '"  data-total="' + total + '" data-legend="' + legend + '" data-date="' + data_date + '"/>';
+                    } else if (total>6 && total<=10) { // Fill 3 cubes for 2nd, 3rd and 4th
+                        
+                        var item_name_1 ='sixten';
+                        var color_1 = settings.colors[item_name_1]?settings.colors[item_name_1]:settings.colors['default'];
+                        item_html += '<rect class="day" width="11" height="11" y="' + y + '" fill="' + color_1+ '" data-items="' + items_str + '"  data-total="' + total + '" data-legend="' + legend + '" data-date="' + data_date + '"/>';
+                    }else if (total>10) { // Fill 3 cubes for 2nd, 3rd and 4th
+                        
+                        var item_name_1 = 'aten';
+                        var color_1 = settings.colors[item_name_1]?settings.colors[item_name_1]:settings.colors['default'];
+                        item_html += '<rect class="day" width="11" height="11" y="' + y + '" fill="' + color_1+ '" data-items="' + items_str + '"  data-total="' + total + '" data-legend="' + legend + '" data-date="' + data_date + '"/>';
+                    }
+                    else{item_html += '<rect class="day" width="11" height="11" y="' + y + '" fill="' + settings.colors['default']  + '" data-items="' + items_str + '"  data-total="' + total + '" data-legend="' + legend + '" data-date="' + data_date + '"/>';}
+
+                    // Move on to the next day
+                    start_date.setDate(start_date.getDate() + 1);
+
+                }
+
+                item_html += "</g>";
+
+                loop_html += item_html;
+
+            }
+
+            // Trick
+            if (month_position[1].x - month_position[0].x < 40) {
+                // Fix ugly graph by removing the first item
+                month_position.shift(0);
+            }
+
+            // Add labels for Months
+            for (var i = 0; i < month_position.length; i++) {
+                var item = month_position[i];
+                var month_name = settings.month_names[item.month_index];
+                loop_html += '<text x="' + item.x + '" y="-5" class="month">' + month_name + '</text>';
+            }
+
+            // Add labels for Weekdays
+            if (settings.start_monday === true) {
+                loop_html += '<text text-anchor="middle" class="wday" dx="-12" dy="11">{0}</text>'.formatString(settings.day_names[0]) +
+                    '<text text-anchor="middle" class="wday" dx="-12" dy="36">{0}</text>'.formatString(settings.day_names[1]) +
+                    '<text text-anchor="middle" class="wday" dx="-12" dy="61">{0}</text>'.formatString(settings.day_names[2]) +
+                    '<text text-anchor="middle" class="wday" dx="-12" dy="86">{0}</text>'.formatString(settings.day_names[3]);
+            } else {
+                loop_html += '<text text-anchor="middle" class="wday" dx="-10" dy="22">{0}</text>'.formatString(settings.day_names[0]) +
+                    '<text text-anchor="middle" class="wday" dx="-10" dy="48">{0}</text>'.formatString(settings.day_names[1]) +
+                    '<text text-anchor="middle" class="wday" dx="-10" dy="74">{0}</text>'.formatString(settings.day_names[2]);
+            }
+
+            // Fixed size with width= 721 and height = 110
+            var wire_html =
+                '<svg viewBox="0 0 721 110">' +
+                '<g transform="translate(25, 20)">' +
+                loop_html +
+                '</g>' + '"Your browser does not support inline SVG."' +
+                '</svg>';
+
+            wrap_chart.html(wire_html);
+
+            _this.find('rect, polygon').on("mouseenter", mouseEnter);
+            _this.find('rect, polygon').on("mouseleave", mouseLeave);
+            _this.find('rect, polygon').on("click", mouseClick);
+            appendTooltip();
+
+        };
+
+        var mouseLeave = function (evt) {
+            $('.svg-tip').hide();
+        };
+
+        var mouseClick = function (evt) {
+            var items = $(evt.target).attr('data-items');
+            var date = $(evt.target).attr('data-date');
+            var total=$(evt.target).attr('data-total');
+            $("#moreinfo").text("On {0}, following items are seen: {1} and total: {2}".formatString(date, items,total))
+        };
+
+        // Handle mouseEnter event when entering into rect element
+        var mouseEnter = function (evt) {
+
+            var target_offset = $(evt.target).offset();
+            var items = $(evt.target).attr('data-items');
+            var legend = $(evt.target).attr('data-legend');
+            var date = $(evt.target).attr('data-date');
+            var total=$(evt.target).attr('data-total');
+            var newdate=date.split('-')
+            newdate=newdate[1]+'-'+newdate[0]+'-'+newdate[2];
+            newdate=new Date(newdate).toDateString();
+            var newitems=items.split(',');
+            var easy,medium,hard;
+            //console.log(newitems.length);
+            if(newitems.length==1)
+            {
+                var e=newitems[0].split(':');
+                if(e[0]=='Easy')
+                {
+                    easy=newitems[0];
+                    medium='Medium:0';
+                    hard='Hard:0';
+
+                }
+                if(e[0]=='Medium')
+                {
+                    medium=newitems[0];
+                    easy='Easy:0';
+                    hard='Hard:0';
+
+                }
+                if(e[0]=='Hard')
+                {
+                    hard=newitems[0];
+                    medium='Medium:0';
+                    easy='Easy:0';
+
+                }
+            }
+            if(newitems.length==2)
+            {
+                var e=newitems[0].split(':');
+                var m=newitems[1].split(':');
+                if(e[0]=='Easy' && m[0]=='Medium')
+                {
+                    easy=newitems[0];
+                    medium=newitems[1];
+                    hard='Hard:0';
+
+                }
+                if(e[0]=='Medium' && m[0]=='Hard')
+                {
+                    medium=newitems[0];
+                    easy='Easy:0';
+                    hard=newitems[1];
+
+                }
+                if(e[0]=='Hard' && m[0]=='Medium')
+                {
+                    hard=newitems[0];
+                    medium=newitems[1];
+                    easy='Easy:0';
+
+                }
+                if(e[0]=='Easy' && m[0]=='Hard')
+                {
+                    easy=newitems[0];
+                    hard=newitems[1];
+                    medium='Medium:0';
+
+                }
+            }
+            if(newitems.length==3)
+            {
+
+                var e=newitems[0].split(':');
+                var m=newitems[1].split(':');
+                var h=newitems[2].split(':');
+                if(e[0]=='Easy' && m[0]=='Medium' && h[0]=='Hard')
+                {
+                    easy=newitems[0];
+                    medium=newitems[1];
+                    hard=newitems[2];
+
+                }
+                if(e[0]=='Medium' && m[0]=='Hard' && h[0]=='Easy')
+                {
+                    medium=newitems[0];
+                    hard=newitems[1];
+                    easy=newitems[2];
+
+                }
+                if(e[0]=='Medium' && m[0]=='Easy' && h[0]=='Hard')
+                {
+                    medium=newitems[0];
+                    hard=newitems[2];
+                    easy=newitems[1];
+
+                }
+                if(e[0]=='Hard' && m[0]=='Medium' && h[0]=='Easy')
+                {
+                    hard=newitems[0];
+                    medium=newitems[1];
+                    easy=newitems[2];
+
+                }
+                if(e[0]=='Hard' && m[0]=='Easy' && h[0]=='Medium')
+                {
+                    hard=newitems[0];
+                    medium=newitems[2];
+                    easy=newitems[1];
+
+                }
+                if(e[0]=='Easy' && m[0]=='Hard' && h[0]=='Medium')
+                {
+                    easy=newitems[0];
+                    hard=newitems[1];
+                    medium=newitems[2];
+
+                }
+
+            }
+            easy+=' ';
+            medium+=' ';
+            var data=''
+            var flag=false
+            if(items=='')
+            {
+                    data="<span style='font-weight: bold;'>{0}</span> <br />{1}".formatString(newdate, 'No Problems Solved');
+                    flag=false;
+            }
+            else
+            {
+                data="<span style='font-weight: bold;'>{0}</span> <br /><span style='font-size:13px;padding-top:10px;'>Total: {1} Programs</span><br /><span style='font-size:10px;font-weight:600;padding-top:15px;'><span style='color:#04ce51'>{2}&nbsp;</span><span style='color:#fccc49'>{3}&nbsp;</span><span style='color:#fc3b35'>{4}</span></span>".formatString(newdate, total, easy,medium,hard);
+                flag=true;
+            }
+
+            var text = settings.tooltip_style === 'default' ?data  : (legend ? legend : items);
+            // console.log(text);
+            // Depending on settings, only show a tooltip when there's something to be shown
+            if (items.length >= 1 ||  settings.always_show_tooltip === true) {
+                var svg_tip = $('.svg-tip').show();
+                svg_tip.html(text);
+                var svg_width = Math.round(svg_tip.width() / 2 + 5);
+
+                var svg_height = svg_tip.height() * 2 + 10;
+                //console.log(svg_height);
+                if(flag==false)
+                {
+                svg_tip.css({top: (target_offset.top - svg_height)+20});
+                }
+                else if(flag==true)
+                {
+                    svg_tip.css({top: (target_offset.top - svg_height)+40});
+                }
+                svg_tip.css({left: target_offset.left - svg_width});
+            }
+
+        };
+
+        // Append tooltip to display when the mouse enters the rect element
+        // Default is display:none
+        var appendTooltip = function () {
+            if ($('.svg-tip').length === 0) {
+                $('body').append('<div class="svg-tip svg-tip-one-line" style="display:none" ></div>');
+            }
+        };
+
+        // Default settings which can be overridden by the user
+        var settings = $.extend({
+            colors: {
+                    'default': '#eeeeee',
+                    'aten': '#ff5773',
+                    'sixten': '#fc768c',
+                    'twosix': '#fc8fa1',
+                    'btwo': '#fcbac5'
+            },
+            month_names: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            day_names: ['M', 'W', 'F', 'S'],
+            start_monday: true,
+            always_show_tooltip: false,
+            stylize_today: false,
+            final_date: new Date().toISOString().slice(0, 10),
+            tooltip_style: 'default', // or 'custom'
+            data: []
+        }, options);
+
+        var _this = $(this);
+
+        start();
+
+    };
+
+}(jQuery));

@@ -1,0 +1,60 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts2/icomoon.eot?in7xhy');
+  src:  url('fonts2/icomoon.eot?in7xhy#iefix') format('embedded-opentype'),
+    url('fonts2/icomoon.ttf?in7xhy') format('truetype'),
+    url('fonts2/icomoon.woff?in7xhy') format('woff'),
+    url('fonts2/icomoon.svg?in7xhy#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-nx:before {
+  content: "\ef900";
+}
+.icon-tekla:before {
+  content: "\ef901";
+}
+.icon-revit:before {
+  content: "\ef902";
+}
+.icon-hm:before {
+  content: "\ef903";
+}
+.icon-solidworks:before {
+  content: "\ef904";
+}
+.icon-vector:before {
+  content: "\ef905";
+}
+.icon-autocad:before {
+  content: "\ef906";
+}
+.icon-ansys:before {
+  content: "\ef907";
+}
+.icon-catia:before {
+  content: "\ef908";
+}
+.icon-mean:before {
+  content: "\ef909";
+}
+.icon-salesforce:before {
+  content: "\ef90a";
+}

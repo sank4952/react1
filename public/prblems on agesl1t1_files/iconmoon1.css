@@ -1,0 +1,102 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts1/icomoon.eot?ri451o');
+  src:  url('fonts1/icomoon.eot?ri451o#iefix') format('embedded-opentype'),
+    url('fonts1/icomoon.ttf?ri451o') format('truetype'),
+    url('fonts1/icomoon.woff?ri451o') format('woff'),
+    url('fonts1/icomoon.svg?ri451o#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-ai:before {
+  content: "\f900";
+}
+.icon-android:before {
+  content: "\f901";
+}
+.icon-ar:before {
+  content: "\f902";
+}
+.icon-aws:before {
+  content: "\f903";
+}
+.icon-bigdata:before {
+  content: "\f904";
+}
+.icon-blockchain:before {
+  content: "\f905";
+}
+.icon-cybersecurity:before {
+  content: "\f906";
+}
+.icon-database:before {
+  content: "\f907";
+}
+.icon-drone:before {
+  content: "\f908";
+}
+.icon-dxf-file-format-symbol:before {
+  content: "\f909";
+}
+.icon-gp:before {
+  content: "\f90a";
+}
+.icon-hn:before {
+  content: "\f90b";
+}
+.icon-ia:before {
+  content: "\f90c";
+}
+.icon-infinity:before {
+  content: "\f90d";
+}
+.icon-ionic:before {
+  content: "\f90e";
+}
+.icon-IOS:before {
+  content: "\f90f";
+}
+.icon-iot:before {
+  content: "\f910";
+}
+.icon-java:before {
+  content: "\f911";
+}
+.icon-Networking:before {
+  content: "\f912";
+}
+.icon-os:before {
+  content: "\f913";
+}
+.icon-robotic:before {
+  content: "\f914";
+}
+.icon-RPA:before {
+  content: "\f915";
+}
+.icon-vmware:before {
+  content: "\f916";
+}
+.icon-vr:before {
+  content: "\f917";
+}
+.icon-web:before {
+  content: "\e918";
+}
